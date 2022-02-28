@@ -3,7 +3,7 @@ const scraperObject = {
   async scraper(browser) {
     let scrapedData = [];
     
-    for (let index = 1; index < 5; index++) {
+    for (let index = 1; index < 84; index++) {
 		let page = await browser.newPage();
       this.url = `https://www.dofus-touch.com/fr/mmorpg/encyclopedie/equipements?page=${index}`;
       console.log(`Navigating to ${this.url}...`);
@@ -49,17 +49,20 @@ const scraperObject = {
             ".ak-encyclo-detail-level",
             (text) => text.textContent
           );
-
+			try {
+				
+			
           dataObj["statistics"] = await newPage.$$eval(
             ".ak-encyclo-detail-right .ak-content-list > .ak-list-element",
             (elements) => {
               // Extract the links from the data
               elements = elements.map((el) => {
                 let element = {};
-                let valueRegex = /\d+/g;
+                let valueRegex = /-?[0-9]\d*(\.\d+)?/g;
                 let value = el
                   .querySelector(".ak-title")
-                  .innerHTML.match(valueRegex);
+				  .innerHTML.match(valueRegex);
+				
 
                 const elementsName = [
                   "Vitalité",
@@ -145,7 +148,9 @@ const scraperObject = {
                     !founded
                   ) {
                     founded = true;
-                    let minmax = {};
+					let minmax = {};
+					if(parseFloat(value[0])<0)
+						value[1] = "-"+ value[1];
                     minmax.min = value[0];
                     minmax.max = value[1] ? value[1] : "";
                     element[elementName] = {};
@@ -157,7 +162,9 @@ const scraperObject = {
               return elements;
             }
           );
-
+		} catch (error) {
+				
+		}
           resolve(dataObj);
           await newPage.close();
         });
