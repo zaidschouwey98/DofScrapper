@@ -5,7 +5,7 @@ async function scrapeAll(browserInstance){
 	try{
 		browser = await browserInstance;
 		let scrapedData = {};
-		for (let index = 20; index < 22; index++) {
+		for (let index = 1; index < 22; index++) {
 			try {
 				scrapedData = await pageScraper.scraper(browser,index);	
 			} catch (error) {
@@ -13,7 +13,7 @@ async function scrapeAll(browserInstance){
 			}
 			
 
-			fs.writeFile(`data${index}.json`, JSON.stringify(scrapedData), 'utf8', function(err) {
+			fs.writeFile(`./page_data/data${index}.json`, JSON.stringify(scrapedData), 'utf8', function(err) {
 				if(err) {
 					return console.log(err);
 				}
