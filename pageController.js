@@ -5,8 +5,13 @@ async function scrapeAll(browserInstance){
 	try{
 		browser = await browserInstance;
 		let scrapedData = {};
-		for (let index = 9; index < 84; index++) {
-			scrapedData = await pageScraper.scraper(browser,index);	
+		for (let index = 20; index < 22; index++) {
+			try {
+				scrapedData = await pageScraper.scraper(browser,index);	
+			} catch (error) {
+				console.log(error)
+			}
+			
 
 			fs.writeFile(`data${index}.json`, JSON.stringify(scrapedData), 'utf8', function(err) {
 				if(err) {

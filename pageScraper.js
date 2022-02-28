@@ -3,7 +3,7 @@ const scraperObject = {
   async scraper(browser,index) {
     let scrapedData = [];
 		let page = await browser.newPage();
-      this.url = `https://www.dofus-touch.com/fr/mmorpg/encyclopedie/equipements?page=${index}`;
+      this.url = `https://www.dofus-touch.com/fr/mmorpg/encyclopedie/equipements?size=96&page=${index}`;
       console.log(`Navigating to ${this.url}...`);
       await page.goto(this.url);
 
@@ -24,17 +24,28 @@ const scraperObject = {
           let dataObj = {};
           let newPage = await browser.newPage();
 
-          await newPage.goto(link);
+		  await newPage.goto(link);
+		  
+		  
+
+
           try {
             let is404 = await newPage.$eval(
               ".ak-404",
               (text) => text.textContent
-            );
+			);
+			
             if (is404) {
-              resolve(dataObj);
-              await newPage.close();
+				page.on('console', (msg) => console.log('PAGE LOG:', msg.text()));
+				await page.evaluate(() => console.log(`it is a 404`));
+				resolve({});
+			
+			  await newPage.close();
+			  return;
             }
-          } catch (error) {}
+		  } catch (error) {}
+		  newPage.on('console', (msg) => console.log('PAGE LOG:', msg.text()));
+		await newPage.evaluate(() => console.log(`it's not a 404`));
           dataObj["name"] = await newPage.$eval(
             ".ak-return-link",
             (text) => text.innerText
