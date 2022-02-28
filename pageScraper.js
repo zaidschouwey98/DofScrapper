@@ -1,9 +1,7 @@
 const scraperObject = {
   url: `https://www.dofus-touch.com/fr/mmorpg/encyclopedie/equipements?size=96&page=`,
-  async scraper(browser) {
+  async scraper(browser,index) {
     let scrapedData = [];
-    
-    for (let index = 1; index < 84; index++) {
 		let page = await browser.newPage();
       this.url = `https://www.dofus-touch.com/fr/mmorpg/encyclopedie/equipements?page=${index}`;
       console.log(`Navigating to ${this.url}...`);
@@ -177,7 +175,7 @@ const scraperObject = {
         } catch (error) {}
       }
       await page.close();
-    }
+    
     return scrapedData;
   },
 };
