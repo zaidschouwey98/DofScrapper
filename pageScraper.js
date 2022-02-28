@@ -24,15 +24,7 @@ const scraperObject = {
         let dataObj = {};
         let newPage = await browser.newPage();
 
-        await newPage.setRequestInterception(true);
-        newPage.on('request', (req) => {
-        if(req.resourceType() === 'image'){
-        req.abort();
-        }
-        else {
-        req.continue();
-        }
-        });
+        
 
         await newPage.goto(link);
         try {
@@ -63,7 +55,7 @@ const scraperObject = {
         );
         dataObj["lvl"] = await newPage.$eval(
           ".ak-encyclo-detail-level",
-          (text) => text.textContent
+          (text) => text.textContent.match(/\d+/g)[0]
         );
         try {
           // dataObj[]
@@ -203,8 +195,8 @@ const scraperObject = {
                 let innerRecipe = {};
                 let numRegex = /\d+/g;
                 innerRecipe.type = el.querySelector(".ak-text").innerHTML;
-                innerRecipe.lvl = el.querySelector(".ak-aside").innerHTML.match(numRegex);
-                innerRecipe.quantity = el.querySelector(".ak-front").innerHTML.match(numRegex);
+                innerRecipe.lvl = el.querySelector(".ak-aside").innerHTML.match(numRegex)[0];
+                innerRecipe.quantity = el.querySelector(".ak-front").innerHTML.match(numRegex)[0];
                 recipe[el.querySelector("div.ak-title > a > span").innerHTML] = innerRecipe;
                 return recipe;
               });
