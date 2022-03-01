@@ -1,9 +1,9 @@
 const scraperObject = {
-  url: `https://www.dofus-touch.com/fr/mmorpg/encyclopedie/equipements?size=96&page=`,
+  url: `https://www.dofus-touch.com/fr/mmorpg/encyclopedie/armes?size=96&page=`,
   async scraper(browser, index) {
     let scrapedData = [];
     let page = await browser.newPage();
-    this.url = `https://www.dofus-touch.com/fr/mmorpg/encyclopedie/equipements?size=96&page=${index}`;
+    this.url = `https://www.dofus-touch.com/fr/mmorpg/encyclopedie/armes?size=96&page=${index}`;
     console.log(`Navigating to ${this.url}...`);
     await page.goto(this.url);
 
@@ -24,8 +24,6 @@ const scraperObject = {
         let dataObj = {};
         let newPage = await browser.newPage();
 
-        
-
         await newPage.goto(link);
         try {
           let is404 = await newPage.$eval(
@@ -34,20 +32,20 @@ const scraperObject = {
           );
 
           if (is404) {
-            page.on('console', (msg) => console.log('PAGE LOG:', msg.text()));
+            page.on("console", (msg) => console.log("PAGE LOG:", msg.text()));
             await page.evaluate(() => console.log(`it is a 404`));
             resolve({});
 
             await newPage.close();
             return;
           }
-        } catch (error) { }
-        
+        } catch (error) {}
+
         dataObj["name"] = await newPage.$eval(
           ".ak-return-link",
           (text) => text.innerText
         );
-        newPage.on('console', (msg) => console.log('PAGE LOG:', msg.text()));
+        newPage.on("console", (msg) => console.log("PAGE LOG:", msg.text()));
         await newPage.evaluate(() => console.log(`Process item ... `));
         dataObj["type"] = await newPage.$eval(
           ".ak-encyclo-detail-type > span",
@@ -59,11 +57,8 @@ const scraperObject = {
         );
         try {
           // dataObj[]
-        } catch (error) {
-          
-        }
+        } catch (error) {}
         try {
-
           dataObj["statistics"] = await newPage.$$eval(
             ".ak-encyclo-detail-right div.col-sm-6 > div.ak-container.ak-panel:not(.no-padding) .ak-content-list > .ak-list-element",
             (elements) => {
@@ -75,8 +70,19 @@ const scraperObject = {
                   .querySelector(".ak-title")
                   .innerHTML.match(valueRegex);
 
-
                 const elementsName = [
+                  "\(PV rendus\)",
+                  "\(Dommages Air\)",
+                  "\(Dommages Eau\)",
+                  "\(Dommages Feu\)",
+                  "\(Dommages Neutre\)",
+                  "\(Dommages Terre\)",
+                  "\(Vol Air\)",
+                  "\(Vol Eau\)",
+                  "\(Vol Feu\)",
+                  "\(Vol Neutre\)",
+                  "\(Vol Terre\)",
+
                   "Vitalité",
                   "Agilité",
                   "Chance",
@@ -161,17 +167,15 @@ const scraperObject = {
                   ) {
                     founded = true;
                     let minmax = {};
-                    if(Array.isArray(value)){
+                    if (Array.isArray(value)) {
                       if (parseFloat(value[0]) < 0 && value[1])
                         value[1] = "-" + value[1];
                       minmax.min = value[0];
                       minmax.max = value[1] ? value[1] : "";
-                    }
-                    else {
+                    } else {
                       minmax.min = value;
                     }
-                    
-                   
+
                     element[elementName] = {};
                     element[elementName] = minmax;
                   }
@@ -181,8 +185,8 @@ const scraperObject = {
               return elements;
             }
           );
-        }catch(error){
-          newPage.on('console', (msg) => console.log('PAGE LOG:', msg.text()));
+        } catch (error) {
+          newPage.on("console", (msg) => console.log("PAGE LOG:", msg.text()));
           await newPage.evaluate(() => console.log(`Pas de stat trouvée.. `));
         }
         try {
@@ -195,19 +199,23 @@ const scraperObject = {
                 let innerRecipe = {};
                 let numRegex = /\d+/g;
                 innerRecipe.type = el.querySelector(".ak-text").innerHTML;
-                innerRecipe.lvl = el.querySelector(".ak-aside").innerHTML.match(numRegex)[0];
-                innerRecipe.quantity = el.querySelector(".ak-front").innerHTML.match(numRegex)[0];
-                recipe[el.querySelector("div.ak-title > a > span").innerHTML] = innerRecipe;
+                innerRecipe.lvl = el
+                  .querySelector(".ak-aside")
+                  .innerHTML.match(numRegex)[0];
+                innerRecipe.quantity = el
+                  .querySelector(".ak-front")
+                  .innerHTML.match(numRegex)[0];
+                recipe[
+                  el.querySelector("div.ak-title > a > span").innerHTML
+                ] = innerRecipe;
                 return recipe;
               });
               return recipe;
             }
           );
-          
-         
         } catch (error) {
-          newPage.on('console', (msg) => console.log('PAGE LOG:', msg.text()));
-        await newPage.evaluate(() => console.log(`Pas de recipe.. `));
+          newPage.on("console", (msg) => console.log("PAGE LOG:", msg.text()));
+          await newPage.evaluate(() => console.log(`Pas de recipe.. `));
         }
         resolve(dataObj);
         await newPage.close();
@@ -218,7 +226,7 @@ const scraperObject = {
       try {
         currentPageData = await pagePromise(urls[link]);
         scrapedData.push(currentPageData);
-      } catch (error) { }
+      } catch (error) {}
     }
     await page.close();
 

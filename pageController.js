@@ -5,7 +5,7 @@ async function scrapeAll(browserInstance){
 	try{
 		browser = await browserInstance;
 		let scrapedData = {};
-		for (let index = 20; index < 22; index++) {
+		for (let index = 5; index < 9; index++) {
 			try {
 				scrapedData = await pageScraper.scraper(browser,index);	
 			} catch (error) {
