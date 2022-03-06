@@ -71,17 +71,17 @@ const scraperObject = {
                   .innerHTML.match(valueRegex);
 
                 const elementsName = [
-                  "\(PV rendus\)",
-                  "\(Dommages Air\)",
-                  "\(Dommages Eau\)",
-                  "\(Dommages Feu\)",
-                  "\(Dommages Neutre\)",
-                  "\(Dommages Terre\)",
-                  "\(Vol Air\)",
-                  "\(Vol Eau\)",
-                  "\(Vol Feu\)",
-                  "\(Vol Neutre\)",
-                  "\(Vol Terre\)",
+                  "\\(PV rendus\\)",
+                  "\\(Dommages Air\\)",
+                  "\\(Dommages Eau\\)",
+                  "\\(Dommages Feu\\)",
+                  "\\(Dommages Neutre\\)",
+                  "\\(Dommages Terre\\)",
+                  "\\(Vol Air\\)",
+                  "\\(Vol Eau\\)",
+                  "\\(Vol Feu\\)",
+                  "\\(Vol Neutre\\)",
+                  "\\(Vol Terre\\)",
 
                   "Vitalité",
                   "Agilité",
@@ -160,7 +160,7 @@ const scraperObject = {
                 ];
                 let founded = false;
                 elementsName.forEach((elementName) => {
-                  let regex = new RegExp(elementName);
+                  let regex = new RegExp(elementName , "i");
                   if (
                     regex.test(el.querySelector(".ak-title").innerHTML) &&
                     !founded
